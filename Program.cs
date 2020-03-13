@@ -20,46 +20,64 @@ namespace XPTracker
 {
   public class Program
   {
-    static void Main(string[] args) => new Program().RunBotAsync().GetAwaiter().GetResult();
-
-// Ask Mark why this no work... It will probably be a simple solution
-    // static void Main(string[] args) => new Program()CreateWebHostBuilder.RunBotAsync().GetAwaiter().GetResult();
+    // static void Main(string[] args) => new Program().RunBotAsync().GetAwaiter().GetResult();
 
 // Old Main Before Commands uncomment to seed data
-    // public static async Task Main(string[] args)
-    // {
-    //   var host = CreateWebHostBuilder(args).Build();
-    //   using (var scope = host.Services.CreateScope())
-    //   {
-    //     var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-    //     Console.WriteLine("Starting to migrate database....");
-    //     await context.Database.MigrateAsync();
-    //     Console.WriteLine("Database is up to date, #party time");
-    //   }
+    public static async Task Main(string[] args)
+    {
+      var host = CreateWebHostBuilder(args).Build();
+      using (var scope = host.Services.CreateScope())
+      {
+        var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+        Console.WriteLine("Starting to migrate database....");
+        await context.Database.MigrateAsync();
+        Console.WriteLine("Database is up to date, #party time");
+        Program BotLife = new Program();
+        BotLife.RunBotAsync().GetAwaiter().GetResult();
+      }
 
-    //   await host.RunAsync();
-    // }
+      await host.RunAsync();
+    }
 
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
         WebHost.CreateDefaultBuilder(args)
             .UseStartup<Startup>();
 
-    private DiscordSocketClient _client;
+        private DiscordSocketClient _client;
         private CommandService _commands;
         private IServiceProvider _services;
 
+        public static IConfigurationRoot Configuration{get;set;}
         public async Task RunBotAsync()
         {
             _client = new DiscordSocketClient();
             _commands = new CommandService();
+            
+            var devEnvironmentVariable = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT");
+            var isDevelopment = string.IsNullOrEmpty(devEnvironmentVariable) ||
+                          devEnvironmentVariable.ToLower() == "development";
+            Console.WriteLine($"{isDevelopment}");
+            var builder = new ConfigurationBuilder();
+            //only add secrets in development
+            if (isDevelopment)
+            {
+                builder.AddUserSecrets<Program>();
+            }
+
+            Configuration = builder.Build();
 
             _services = new ServiceCollection()
+               .Configure<Settings>(Configuration.GetSection(nameof(Settings)))
                 .AddSingleton(_client)
                 .AddSingleton(_commands)
+                .AddSingleton<ISecretRevealer, SecretsRevealer>()
                 .AddDbContext<DatabaseContext>()
                 .BuildServiceProvider();
 
-            string token = "NjgyMzc1MzQ0ODUwMDc1NjU4.XmUalQ.dGMFxPp9CzOP-bGTIWLEzpGJdM4";
+            // string token = this.DiscordToken;
+            var revealer = _services.GetService<ISecretRevealer>();
+            
+            string token = revealer.GetToken();
 
             _client.Log += _client_Log;
 

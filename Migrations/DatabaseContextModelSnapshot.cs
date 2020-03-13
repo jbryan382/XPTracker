@@ -19,6 +19,27 @@ namespace XPTracker.Migrations
                 .HasAnnotation("ProductVersion", "3.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            modelBuilder.Entity("XPTracker.Models.LevelTrackerModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MaxXP")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinXP")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LevelTracker");
+                });
+
             modelBuilder.Entity("XPTracker.Models.SessionTrackerModel", b =>
                 {
                     b.Property<int>("Id")
@@ -32,8 +53,14 @@ namespace XPTracker.Migrations
                     b.Property<int>("ExplorationXP")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("SessionDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("SessionDescription")
                         .HasColumnType("text");
+
+                    b.Property<int>("SessionNumber")
+                        .HasColumnType("integer");
 
                     b.Property<int>("SocialInteractionXP")
                         .HasColumnType("integer");

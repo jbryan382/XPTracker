@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using XPTracker.Models;
 
 namespace XPTracker.Models
 {
@@ -9,6 +10,7 @@ namespace XPTracker.Models
   {
     public DbSet<XPTrackerModel> XPTracker { get; set; }
     public DbSet<SessionTrackerModel> SessionTracker { get; set; }
+    public DbSet<LevelTrackerModel> LevelTracker { get; set; }
     private string ConvertPostConnectionToConnectionString(string connection)
     {
       var _connection = connection.Replace("postgres://", String.Empty);
@@ -29,8 +31,5 @@ namespace XPTracker.Models
         optionsBuilder.UseNpgsql(conn);
       }
     }
-
-
-
   }
 }
