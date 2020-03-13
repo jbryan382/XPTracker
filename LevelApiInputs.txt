@@ -99,6 +99,23 @@
   "maxXP": 9999999
 }
 
+SessionTrackerController HTTP Post "bulk" endpoint causes an error 
+but the endpoint receives just fine.
+
+{
+  "sessionNumber": 11,
+  "sessionDescription": "This is to account for previous sessions",
+  "socialInteractionXP": 900,
+  "explorationXP": 900,
+  "combatXP": 900,
+  "xpId": 1,
+  "xpTrackerModel": {
+    "id": 1,
+    "totalXP": 2700,
+    "totalLevel": 4
+  }
+}
+
 
 
 

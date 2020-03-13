@@ -10,8 +10,8 @@ using XPTracker.Models;
 namespace XPTracker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200313000557_FixedDataWithinSessionAndXP")]
-    partial class FixedDataWithinSessionAndXP
+    [Migration("20200313042418_DropedAndRefreshedDB")]
+    partial class DropedAndRefreshedDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

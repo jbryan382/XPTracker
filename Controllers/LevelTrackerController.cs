@@ -84,7 +84,7 @@ namespace XPTracker.Controllers
 
             return CreatedAtAction("GetLevelTrackerModel", new { id = levelTrackerModel.Id }, levelTrackerModel);
         }
-        
+
         [HttpPost("bulk")]
         public async Task<IEnumerable<LevelTrackerModel>> PostLevels(IEnumerable<LevelTrackerModel> levelTracker)
         {
@@ -102,7 +102,7 @@ namespace XPTracker.Controllers
                 };
                 levels.Add(level);
             }
-            _context.LevelTracker.AddRange(levels);
+            await _context.LevelTracker.AddRangeAsync(levels);
             await _context.SaveChangesAsync();
             return levels;
         }

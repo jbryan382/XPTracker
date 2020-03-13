@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace XPTracker.Migrations
 {
-    public partial class FixedDataWithinSessionAndXP : Migration
+    public partial class DropedAndRefreshedDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
