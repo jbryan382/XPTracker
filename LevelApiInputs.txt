@@ -103,7 +103,7 @@ SessionTrackerController HTTP Post "bulk" endpoint causes an error
 but the endpoint receives just fine.
 
 {
-  "sessionNumber": 11,
+  "sessionNumber": 10,
   "sessionDescription": "This is to account for previous sessions",
   "socialInteractionXP": 900,
   "explorationXP": 900,
