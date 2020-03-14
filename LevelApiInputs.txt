@@ -99,7 +99,7 @@
   "maxXP": 9999999
 }
 
-SessionTrackerController HTTP Post "bulk" endpoint causes an error 
+SessionTrackerController HTTP Post endpoint causes an error 
 but the endpoint receives just fine.
 
 {

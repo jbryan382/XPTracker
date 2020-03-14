@@ -12,11 +12,11 @@ Displaying :
 
 Enter ! and then your chosen command:
 1 - TotalXP
-2 - AddToTotalXP YourCombatExperienceInt YourExplorationExperienceInt YourSocialInteractionExperienceInt "Short Description of the Session"
+2 - AddToTotalXP YourCombatExperienceInt YourExplorationExperienceInt YourSocialInteractionExperienceInt ''Short Description of the Session''
 3 - CurrentSession
 4 - LastSession
 5 - SelectSession TypeTheSessionNumber
-6 - SelectSession TypeTheSessionNumber
+6 - SelectSessionFull TypeTheSessionNumber
 7 - DeleteLastSession
 
 This Project Utilizes:
