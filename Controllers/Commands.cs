@@ -196,14 +196,12 @@ namespace XPTracker.Controllers
     }
 
     [Command("M")]
-    public async Task DescribeMonsterAsync(string monster)
+    public async Task DescribeMonsterAsync(string monster, string stat = "keys")
     {
       // Create curl request out to ex: http://www.dnd5eapi.co/api/monsters/owl
 
-      // string monsterNameFilter = ".* ";
-      // var monsterName = Regex.Match(monsterNameFilter);
-      // Console.WriteLine(monsterName);
-      // var mosterPropQuery = monster.Replace(monsterName, " ");
+      Console.WriteLine(monster);
+      Console.WriteLine(stat);
       var sanitizedMonster = monster.ToLower();
       var url = $"http://www.dnd5eapi.co/api/monsters/{sanitizedMonster}";
       var client = new HttpClient();
@@ -223,18 +221,23 @@ namespace XPTracker.Controllers
         }
       }
 
-      // foreach (String key in listOfKeys)
-      // {
-      //   if (key.Contains())
-      // }
-
-      var allKeyString = string.Join(",", listOfKeys).Replace(",", ", ");
-      // Console.WriteLine(allKeyString);
-
-
-      // Console.WriteLine(keys);
-      // Manipulate and display out the desc, and 
-      await ReplyAsync(allKeyString);
+      if (stat == "keys")
+      {
+        var allKeyString = string.Join(",", listOfKeys).Replace(",", ", ");
+        await ReplyAsync(allKeyString);
+      }
+      else
+      {
+        foreach (String key in listOfKeys)
+        {
+          // Console.WriteLine(key);
+          if (key.Contains(stat))
+          {
+            var response = root.GetProperty($"{stat}");
+            await ReplyAsync($"{response}");
+          }
+        }
+      }
     }
 
     [Command("Condition")]
