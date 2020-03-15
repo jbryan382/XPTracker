@@ -14,10 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using XPTracker.Models;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
-using System.Net.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace XPTracker.Controllers
 {
@@ -177,8 +174,9 @@ namespace XPTracker.Controllers
         {
             await ReplyAsync($"Enter ! and then your chosen command:\n1 - TotalXP \n2 - AddToTotalXP YourCombatExperienceInt YourExplorationExperienceInt YourSocialInteractionExperienceInt ''Short Description of the Session'' \n3 - CurrentSession \n4 - LastSession \n5 - SelectSession TypeTheSessionNumber \n6 - SelectSession TypeTheSessionNumber \n7 - DeleteLastSession");
         }
+        // Change back to spell after testing
 
-        [Command("Spell")]
+        [Command("S")]
         public async Task DescribeSpellAsync(string spell)
         {
             // Create curl request out to ex: http://www.dnd5eapi.co/api/spells/acid-arrow
@@ -186,12 +184,43 @@ namespace XPTracker.Controllers
             var url = $"http://www.dnd5eapi.co/api/spells/{sanitizedSpell}";
             var client = new HttpClient();
             var body = await client.GetAsync(url);
+
             // I do not like how I am doing this I need to change the output from a Json Object as a string
-            var respJson = JsonConvert.DeserializeObject<Object>(body.Content.ReadAsStringAsync().Result);
+            // var respJson = JsonConvert.DeserializeObject<Object>(body.Content.ReadAsStringAsync().Result);
             // var respJson = body.Content.ReadAsStringAsync().Result;
-            Console.WriteLine($"{respJson}");
-            // Manipulate and display out the desc, and 
-            await ReplyAsync($"{respJson}");
+            var jsonDoc = JsonDocument.Parse(body.Content.ReadAsStringAsync().Result);
+            var root = jsonDoc.RootElement;
+
+            // For each property pulled from root we need to confirm if the property exists
+
+            var desc = root.GetProperty("desc");
+            var fullDescList = new List<string>();
+            for (var i = 0; i < desc.GetArrayLength(); i++)
+            {
+                fullDescList.Add(desc[i].GetString());
+            }
+            var fullDesc = string.Join(", ", fullDescList).Replace('-', ' ').Replace(".,", ".");
+            var descHL = root.GetProperty("higher_level");
+            var fullHLList = new List<string>();
+            for (var i = 0; i < descHL.GetArrayLength(); i++)
+            {
+                fullHLList.Add(descHL[i].GetString());
+            }
+            var fullHL = string.Join(", ", fullHLList).Replace('-', ' ').Replace(".,", ".");
+            var range = root.GetProperty("range").GetString();
+            var comp = root.GetProperty("components");
+            var fullComponentsList = new List<string>();
+            for (var i = 0; i < comp.GetArrayLength(); i++)
+            {
+                fullComponentsList.Add(comp[i].GetString());
+            }
+            var fullComp = string.Join(", ", fullComponentsList).Replace('-', ' ').Replace(".,", ".");
+            var material = root.GetProperty("material").GetString();
+            var ritual = root.GetProperty("ritual").GetBoolean();
+            var duration = root.GetProperty("duration").GetString();
+            var concentration = root.GetProperty("concentration").GetBoolean();
+            var casting_time = root.GetProperty("casting_time").GetString();
+            await ReplyAsync($"Description: {fullDesc}\nHigher Level: {fullHL}\nRange: {range}\nComponents: {fullComp}\nMaterials: {material}\nRitual: {ritual}\nDuration: {duration}\nConcentration: {concentration}\nCasting Time: {casting_time}");
         }
 
         [Command("Monster")]
@@ -229,6 +258,28 @@ namespace XPTracker.Controllers
             }
             var fullDesc = string.Join(", ", fullDescList).Replace('-', ' ').Replace(".,", ".");
             await ReplyAsync($"{fullDesc}");
+        }
+
+        [Command("Equipment")]
+        public async Task DescribeEquipmentAsync(string equipment)
+        {
+            // Create curl request out to ex: http://www.dnd5eapi.co/api/equipment/club
+            var sanitizedEquipment = equipment.ToLower();
+
+            var url = $"http://www.dnd5eapi.co/api/equipment/{sanitizedEquipment}";
+            var client = new HttpClient();
+            var body = await client.GetAsync(url);
+            var jsonDoc = JsonDocument.Parse(body.Content.ReadAsStringAsync().Result);
+            var root = jsonDoc.RootElement;
+            // var name = root.GetProperty("name").GetString(); shouldn't need this since we query with the name
+            var fullDamageList = new List<string>();
+            var damage = root.GetProperty("damage");
+            for (var i = 0; i < damage.GetArrayLength(); i++)
+            {
+                fullDamageList.Add(damage[i].GetString());
+            }
+            var fullDamage = string.Join(", ", fullDamageList).Replace('-', ' ').Replace(".,", ".");
+            await ReplyAsync($"{fullDamage}");
         }
 
         [Command("Night")]

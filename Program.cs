@@ -13,7 +13,6 @@ using XPTracker.Models;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace XPTracker
