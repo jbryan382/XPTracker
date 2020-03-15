@@ -223,8 +223,8 @@ namespace XPTracker.Controllers
 
       if (stat == "keys")
       {
-        var allKeyString = string.Join(",", listOfKeys).Replace(",", ", ");
-        await ReplyAsync(allKeyString);
+        var allKeyString = string.Join(",", listOfKeys).Replace(":,", ", ");
+        await ReplyAsync($"You can query one of these keys for {monster}: {allKeyString}");
       }
       else
       {
