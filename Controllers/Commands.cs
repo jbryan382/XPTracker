@@ -187,122 +187,47 @@ namespace XPTracker.Controllers
             var jsonDoc = JsonDocument.Parse(body.Content.ReadAsStringAsync().Result);
             var root = jsonDoc.RootElement;
 
+            // Works with most spells, but a few are giving me an issue
+            // I need to determine if its the 2000 character limit we ran into prior.
+
             // For each property pulled from root we need to confirm if the property exists
             var descExists = root.TryGetProperty("desc", out JsonElement desc);
             Console.WriteLine($"{descExists}");
 
-            // var fullDesc = "";
-            // if (descExists == true)
-            // {
-            // var desc = root.GetProperty("desc");
             var fullDescList = new List<string>();
             for (var i = 0; i < desc.GetArrayLength(); i++)
             {
                 fullDescList.Add(desc[i].GetString());
             }
             var fullDesc = string.Join(", ", fullDescList).Replace('-', ' ').Replace(".,", ".");
-            // }
-            // else
-            // {
-            //     fullDesc = "Not Found";
-            // }
 
             var descHLExists = root.TryGetProperty("higher_level", out JsonElement descHL);
-            // var fullHL = "";
-            // if (descHLExists == true)
-            // {
-            // var descHL = root.GetProperty("higher_level");
             var fullHLList = new List<string>();
             for (var i = 0; i < descHL.GetArrayLength(); i++)
             {
                 fullHLList.Add(descHL[i].GetString());
             }
             var fullHL = string.Join(", ", fullHLList).Replace('-', ' ').Replace(".,", ".");
-            // }
-            // else
-            // {
-            //     fullHL = "Not Found";
-            // }
+
             var rangeExists = root.TryGetProperty("range", out JsonElement range);
-            // var range = "";
-            // if (rangeExists == true)
-            // {
-            //     range = root.GetProperty("range").GetString();
-            //     Console.WriteLine($"Worked");
-            // }
-            // else
-            // {
-            //     range = "";
-            // }
 
             var compExists = root.TryGetProperty("components", out JsonElement comp);
-            // var fullComp = "";
-            // if (compExists == true)
-            // {
-            // var comp = root.GetProperty("components");
             var fullComponentsList = new List<string>();
             for (var i = 0; i < comp.GetArrayLength(); i++)
             {
                 fullComponentsList.Add(comp[i].GetString());
             }
             var fullComp = string.Join(", ", fullComponentsList).Replace('-', ' ').Replace(".,", ".");
-            // }
-            // else
-            // {
-            //     fullComp = "Not Found";
-            // }
+
             var materialExists = root.TryGetProperty("material", out JsonElement material);
-            // var material = "";
-            // if (materialExists == true)
-            // {
-            //     material = root.GetProperty("material").GetString();
-            //     Console.WriteLine($"Worked");
-            // }
-            // else
-            // {
-            //     material = "Not Found";
-            // }
 
             var ritualExists = root.TryGetProperty("ritual", out JsonElement ritual);
-            // var ritual = false;
-
-            // if (ritualExists == true)
-            // {
-            //     ritual = root.GetProperty("ritual").GetBoolean();
-            //     Console.WriteLine($"Worked");
-            // }
 
             var durationExists = root.TryGetProperty("duration", out JsonElement duration);
-            // var duration = "";
-            // if (durationExists == true)
-            // {
-            //     duration = root.GetProperty("duration").GetString();
-            //     Console.WriteLine($"Worked");
-            // }
-            // else
-            // {
-            //     duration = "Not Found";
-            // }
 
             var concentrationExists = root.TryGetProperty("concentration", out JsonElement concentration);
-            // var concentration = false;
-            // if (concentrationExists == true)
-            // {
-            //     concentration = root.GetProperty("concentration").GetBoolean();
-            //     Console.WriteLine($"Worked");
-            // }
 
             var casting_timeExists = root.TryGetProperty("casting_time", out JsonElement casting_time);
-            // var casting_time = "";
-            // if (casting_timeExists == true)
-            // {
-            //     casting_time = root.GetProperty("casting_time").GetString();
-            //     Console.WriteLine($"Worked");
-            // }
-            // else
-            // {
-            //     casting_time = "Not Found";
-            // }
 
             await ReplyAsync($"Description: {fullDesc}\nHigher Level: {fullHL}\nRange: {range}\nComponents: {fullComp}\nMaterials: {material}\nRitual: {ritual}\nDuration: {duration}\nConcentration: {concentration}\nCasting Time: {casting_time}");
         }
