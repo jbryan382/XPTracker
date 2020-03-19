@@ -179,7 +179,7 @@ namespace XPTracker.Controllers
         [Command("Spell")]
         public async Task DescribeSpellAsync(string spell)
         {
-            // Create curl request out to ex: http://www.dnd5eapi.co/api/spells/acid-arrow
+            // Create HttpClient request out to ex: http://www.dnd5eapi.co/api/spells/acid-arrow
             var sanitizedSpell = spell.ToLower();
             var url = $"http://www.dnd5eapi.co/api/spells/{sanitizedSpell}";
             var client = new HttpClient();
@@ -192,8 +192,6 @@ namespace XPTracker.Controllers
 
             // For each property pulled from root we need to confirm if the property exists
             var descExists = root.TryGetProperty("desc", out JsonElement desc);
-            Console.WriteLine($"{descExists}");
-
             var fullDescList = new List<string>();
             for (var i = 0; i < desc.GetArrayLength(); i++)
             {
@@ -203,15 +201,25 @@ namespace XPTracker.Controllers
 
             var descHLExists = root.TryGetProperty("higher_level", out JsonElement descHL);
             var fullHLList = new List<string>();
-            for (var i = 0; i < descHL.GetArrayLength(); i++)
+            var fullHL = "";
+
+            if (descHLExists == true)
             {
-                fullHLList.Add(descHL[i].GetString());
+                for (var i = 0; i < descHL.GetArrayLength(); i++)
+                {
+                    fullHLList.Add(descHL[i].GetString());
+                }
+                fullHL = string.Join(", ", fullHLList).Replace('-', ' ').Replace(".,", ".");
             }
-            var fullHL = string.Join(", ", fullHLList).Replace('-', ' ').Replace(".,", ".");
+            else
+            {
+                fullHL = "Not Found";
+            }
 
             var rangeExists = root.TryGetProperty("range", out JsonElement range);
 
             var compExists = root.TryGetProperty("components", out JsonElement comp);
+
             var fullComponentsList = new List<string>();
             for (var i = 0; i < comp.GetArrayLength(); i++)
             {
@@ -240,11 +248,27 @@ namespace XPTracker.Controllers
             var url = $"http://www.dnd5eapi.co/api/monsters/{sanitizedMonster}";
             var client = new HttpClient();
             var body = await client.GetAsync(url);
-            var respJson = JsonConvert.DeserializeObject<Object>(body.Content.ReadAsStringAsync().Result);
-            // var respJson = body.Content.ReadAsStringAsync().Result;
-            Console.WriteLine($"{respJson}");
-            // Manipulate and display out the desc, and 
-            await ReplyAsync($"{respJson}");
+            var jsonDoc = JsonDocument.Parse(body.Content.ReadAsStringAsync().Result);
+            var root = jsonDoc.RootElement;
+            var sizeExists = root.TryGetProperty("size", out JsonElement size);
+            var typeExists = root.TryGetProperty("type", out JsonElement type);
+            var alignmentExists = root.TryGetProperty("alignment", out JsonElement alignment);
+            var armor_classExists = root.TryGetProperty("armor_class", out JsonElement armor_class);
+            var hit_pointsExists = root.TryGetProperty("hit_points", out JsonElement hit_points);
+            var hit_diceExists = root.TryGetProperty("hit_dice", out JsonElement hit_dice);
+            // I need to split the array into each individual props
+            var speedExists = root.TryGetProperty("speed", out JsonElement speed);
+            // I need to split the array into each individual props
+            var proficienciesExists = root.TryGetProperty("proficiencies", out JsonElement proficiencies);
+            // I need to split the array into each individual props
+            var sensesExists = root.TryGetProperty("senses", out JsonElement senses);
+            var languagesExists = root.TryGetProperty("languages", out JsonElement languages);
+            // I need to split the array into each individual props
+            var special_abilitiesExists = root.TryGetProperty("special_abilities", out JsonElement special_abilities);
+            // I need to split the array into each individual props
+            var actionsExists = root.TryGetProperty("actions", out JsonElement actions);
+
+            await ReplyAsync($"Size: {size}\nType: {type}\nAlignment: {alignment}\nArmor Class: {armor_class}\nHit Points: {hit_points}\nHit Dice: {hit_dice}\nSpeed: {speed}\nProficiencies: {proficiencies}\nSenses: {senses}\nLanguages: {languages}\nSpecial Abilities: {special_abilities}\nActions: {actions}");
         }
 
         [Command("Condition")]
@@ -259,8 +283,8 @@ namespace XPTracker.Controllers
             var jsonDoc = JsonDocument.Parse(body.Content.ReadAsStringAsync().Result);
             var root = jsonDoc.RootElement;
             // var name = root.GetProperty("name").GetString(); shouldn't need this since we query with the name
+            var descExists = root.TryGetProperty("desc", out JsonElement desc);
             var fullDescList = new List<string>();
-            var desc = root.GetProperty("desc");
             for (var i = 0; i < desc.GetArrayLength(); i++)
             {
                 fullDescList.Add(desc[i].GetString());
